@@ -1,5 +1,10 @@
 # React Material UI Carousel
 
+## Fork Changes
+
+ - Added cross-fade and cross-slide functionality instead of the elements disappearing and re-rendering.
+ - Added a `renderIndicator` prop that can be used to render a custom indicator instead of the default bullets.
+
 ## Description
 
 A Generic, extendible Carousel UI component for React using [Material UI](https://material-ui.com/)  
