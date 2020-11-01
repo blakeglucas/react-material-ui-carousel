@@ -13,6 +13,7 @@ const styles = {
     root: {
         position: "relative",
         overflow: "hidden",
+        height: '400px',
     },
     indicators: {
         width: "100%",
