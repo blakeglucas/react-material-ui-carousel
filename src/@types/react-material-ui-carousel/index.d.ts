@@ -36,7 +36,7 @@ export interface CarouselProps {
     changeOnFirstRender?: boolean,
     next?: Function,
     prev?: Function,
-    renderIndicator?(index: number, props: RenderIndicatorProps): React.ReactNode,
+    renderIndicator?(index: number, props: RenderIndicatorProps): ReactNode,
 }
 
 declare const Carousel: React.ComponentType<CarouselProps>;
