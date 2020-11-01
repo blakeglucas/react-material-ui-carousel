@@ -1,5 +1,5 @@
 import React from 'react';
-import Carousel from 'react-material-ui-carousel';
+import Carousel from '../../../dist/'
 import autoBind from 'auto-bind';
 import {
     FormLabel,

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Fade from '@material-ui/core/Fade';
 import Slide from '@material-ui/core/Slide';
 import IconButton from '@material-ui/core/IconButton';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import autoBind from 'auto-bind';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
@@ -12,12 +12,13 @@ import { useSwipeable } from 'react-swipeable';
 const styles = {
     root: {
         position: "relative",
-        overflow: "hidden"
+        overflow: "hidden",
     },
     indicators: {
         width: "100%",
-        marginTop: "10px",
-        textAlign: "center"
+        textAlign: "center",
+        position: 'absolute',
+        top: 'calc(100% - 24px)',
     },
     indicator: {
         fontSize: "15px",
@@ -81,6 +82,28 @@ const styles = {
     }
 }
 
+function renderIndicator(index, props) {
+    const style = props.indicatorProps !== undefined ? props.indicatorProps.style : undefined;
+    let className = props.indicatorProps !== undefined ? props.indicatorProps.className : undefined;
+    const activeStyle = props.activeIndicatorProps !== undefined ? props.activeIndicatorProps.style : undefined;
+    const activeClassName = props.activeIndicatorProps !== undefined ? props.activeIndicatorProps.className : undefined;
+
+
+    className = index === props.active ? 
+        `${props.classes.indicator} ${props.classes.active} ${activeClassName}`: 
+        `${props.classes.indicator} ${className}`;
+            
+    return (
+        <FiberManualRecordIcon 
+            key={index}
+            size='small'
+            className={className}
+            style={index === props.active ? activeStyle : style}
+            onClick={() => {props.press(index)}}
+        />
+    );
+}
+
 const sanitizeProps = (props) =>
 {
     const animation = props.animation !== undefined ? props.animation: "fade";
@@ -105,7 +128,8 @@ const sanitizeProps = (props) =>
         changeOnFirstRender: props.changeOnFirstRender !== undefined ? props.changeOnFirstRender : false,
         next: props.next !== undefined ? props.next : () => {},
         prev: props.prev !== undefined ? props.prev : () => {},
-        className: props.className !== undefined ? props.className : ""
+        className: props.className !== undefined ? props.className : "",
+        renderIndicator: props.renderIndicator || renderIndicator,
     }
 }
 
@@ -267,6 +291,7 @@ class Carousel extends Component
             indicatorProps,
             activeIndicatorProps,
             className,
+            renderIndicator,
         } = sanitizeProps(this.props);
 
         const classes = this.props.classes;
@@ -351,6 +376,7 @@ class Carousel extends Component
                         indicatorContainerProps={indicatorContainerProps}
                         indicatorProps={indicatorProps}
                         activeIndicatorProps={activeIndicatorProps}
+                        render={renderIndicator}
                     /> : null
                 }
             </div>
@@ -358,31 +384,41 @@ class Carousel extends Component
     }
 }
 
+const useItemStyles = makeStyles({
+    carouselItem: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+    }
+})
+
 function CarouselItem(props)
 {
+    const classes = useItemStyles()
+
     const swipeHandlers = useSwipeable({
         onSwipedLeft: () => props.next(),
         onSwipedRight: () => props.prev()
     })
 
     return (
-        props.display ? (
-            <div {...swipeHandlers} className="CarouselItem" >
-                {props.animation === "slide" ?
-                    <Slide direction={props.active ? (props.isNext ? "left" : "right") : (props.isNext ? "right" : "left")} in={props.active} timeout={props.timeout}>
-                        <div>
-                            {props.child}
-                        </div>
-                    </Slide>
-                    :
-                    <Fade in={props.active} timeout={props.timeout}>
-                        <div>
-                            {props.child}
-                        </div>
-                    </Fade>
-                }
-            </div>
-        ) : null
+        <div {...swipeHandlers} className={`CarouselItem ${classes.carouselItem}`} >
+            {props.animation === "slide" ?
+                <Slide direction={props.active ? (props.isNext ? "left" : "right") : (props.isNext ? "right" : "left")} in={props.active} timeout={props.timeout}>
+                    <div>
+                        {props.child}
+                    </div>
+                </Slide>
+                :
+                <Fade in={props.active} timeout={props.timeout}>
+                    <div>
+                        {props.child}
+                    </div>
+                </Fade>
+            }
+        </div>
     )
 }
 
@@ -393,25 +429,7 @@ function Indicators(props)
     let indicators = [];
     for (let i = 0; i < props.length; i++)
     {
-        const style = props.indicatorProps !== undefined ? props.indicatorProps.style : undefined;
-        let className = props.indicatorProps !== undefined ? props.indicatorProps.className : undefined;
-        const activeStyle = props.activeIndicatorProps !== undefined ? props.activeIndicatorProps.style : undefined;
-        const activeClassName = props.activeIndicatorProps !== undefined ? props.activeIndicatorProps.className : undefined;
-
-
-        className = i === props.active ? 
-            `${classes.indicator} ${classes.active} ${activeClassName}`: 
-            `${classes.indicator} ${className}`;
-
-        const item = <FiberManualRecordIcon 
-                        key={i}
-                        size='small'
-                        className={className}
-                        style={i === props.active ? activeStyle : style}
-                        onClick={() => {props.press(i)}}
-                    />;
-
-        indicators.push(item);
+        indicators.push(props.render(i, props));
     }
 
     const wrapperStyle = props.indicatorContainerProps !== undefined ? props.indicatorContainerProps.style : undefined;

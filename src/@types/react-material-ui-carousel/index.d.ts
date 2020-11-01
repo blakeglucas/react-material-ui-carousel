@@ -6,6 +6,16 @@ export interface CarouselIndicatorProps {
     style: React.CSSProperties
 }
 
+export interface RenderIndicatorProps {
+    classes: string[]
+    length: number
+    active: number
+    press: Function
+    indicatorContainerProps?: CarouselIndicatorProps
+    indicatorProps?: CarouselIndicatorProps
+    activeIndicatorProps?: CarouselIndicatorProps
+}
+
 export interface CarouselProps {
     indicators?: boolean,
     autoPlay?: boolean,
@@ -25,7 +35,8 @@ export interface CarouselProps {
     onChange?: Function,
     changeOnFirstRender?: boolean,
     next?: Function,
-    prev?: Function
+    prev?: Function,
+    renderIndicator?(index: number, props: RenderIndicatorProps): React.ReactNode,
 }
 
 declare const Carousel: React.ComponentType<CarouselProps>;

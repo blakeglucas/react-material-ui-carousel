@@ -1,5 +1,6 @@
 import React from 'react';
-import Carousel from "react-material-ui-carousel"
+// import Carousel from "react-material-ui-carousel"
+import Carousel from '../../../dist/'
 import autoBind from "auto-bind"
 import '../style//Example.scss';
 
@@ -197,9 +198,16 @@ class BannerExample extends React.Component {
                     timeout={this.state.timeout}
                     navButtonsAlwaysVisible={this.state.navButtonsAlwaysVisible}
                     navButtonsAlwaysInvisible={this.state.navButtonsAlwaysInvisible}
-                    next={(now, previous) => console.log(`Next User Callback: Now displaying child${now}. Previously displayed child${previous}`)}
-                    prev={(now, previous) => console.log(`Prev User Callback: Now displaying child${now}. Previously displayed child${previous}`)}
-                    onChange={(now, previous) => console.log(`OnChange User Callback: Now displaying child${now}. Previously displayed child${previous}`)}
+                    renderIndicator={(i, props) => {
+                        return (
+                            <svg className='MuiSvgIcon-root' viewBox='0 0 32 8'>
+                                <rect cx={16} cy={4} width={30} height={8} stroke='#444' fill='#000' />
+                            </svg>
+                        )
+                    }}
+                    // next={(now, previous) => console.log(`Next User Callback: Now displaying child${now}. Previously displayed child${previous}`)}
+                    // prev={(now, previous) => console.log(`Prev User Callback: Now displaying child${now}. Previously displayed child${previous}`)}
+                    // onChange={(now, previous) => console.log(`OnChange User Callback: Now displaying child${now}. Previously displayed child${previous}`)}
                 >
                     {
                         items.map((item, index) => {

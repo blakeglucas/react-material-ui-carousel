@@ -11,7 +11,7 @@ const App = () => (
         </p>
         
         <Example/>
-        <SecondExample/>
+        {/* <SecondExample/> */}
     </div>
 );
 
